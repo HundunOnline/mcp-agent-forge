@@ -22,30 +22,42 @@ Agent Forge 是一个智能体创建和管理平台，能够创建和管理具�
 
 ### 安装
 
-1. 克隆仓库：
 ```bash
 git clone https://github.com/HundunOnline/mcp-agent-forge.git
-cd agent-forge
+cd agent-forge && make build
 ```
 
-2. 安装依赖：
-```bash
-go mod download
+### MCP 配置
+
+```json
+{
+  "mcpServers": {
+    "mcp-agent-forge": {
+      "command": "/path/to/mcp-agent-forge",
+      "env": {
+        "DEEPSEEK_API_KEY": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx",
+      }
+    }
+  }
+}
 ```
 
-3. 设置环境变量：
-```bash
-export DEEPSEEK_API_KEY=your_api_key_here
-```
+### 配置说明
+
+#### Configuration
+
+#### Environment Variables
+
+| 变量名 | 描述 | 默认值 | 是否必需 |
+|--------|------|---------|----------|
+| `DEEPSEEK_API_KEY` | DeepSeek API 密钥 | - | 是 |
+| `LOG_LEVEL` | 日志级别 (debug, info, warn, error) | info | 否 |
+| `LOG_PATH` | 日志文件路径 | ./logs | 否 |
+| `CONFIG_PATH` | 配置文件路径 | ./config/config.yaml | 否 |
+| `PORT` | 服务端口号 | 8080 | 否 |
+| `DEBUG` | 调试模式开关 | false | 否 |
 
 ### 使用方法
-
-1. 启动服务：
-```bash
-go run main.go
-```
-
-2. API 端点说明：
 
 - `expert_personality_generation`: 创建新的智能体
 - `agent_answer`: 模拟智能体回答问题
@@ -128,30 +140,42 @@ Agent Forge is a platform for creating and managing AI agents with specific pers
 
 ### Installation
 
-1. Clone the repository:
 ```bash
 git clone https://github.com/HundunOnline/mcp-agent-forge.git
-cd agent-forge
+cd agent-forge && make build
 ```
 
-2. Install dependencies:
-```bash
-go mod download
+### MCP Configuration
+
+```json
+{
+  "mcpServers": {
+    "mcp-agent-forge": {
+      "command": "/path/to/mcp-agent-forge",
+      "env": {
+        "DEEPSEEK_API_KEY": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx",
+      }
+    }
+  }
+}
 ```
 
-3. Set environment variables:
-```bash
-export DEEPSEEK_API_KEY=your_api_key_here
-```
+### Configuration Guide
+
+#### Configuration
+
+#### Environment Variables
+
+| Variable Name | Description | Default Value | Required |
+|--------------|-------------|---------------|----------|
+| `DEEPSEEK_API_KEY` | DeepSeek API Key | - | Yes |
+| `LOG_LEVEL` | Logging level (debug, info, warn, error) | info | No |
+| `LOG_PATH` | Log file path | ./logs | No |
+| `CONFIG_PATH` | Configuration file path | ./config/config.yaml | No |
+| `PORT` | Service port | 8080 | No |
+| `DEBUG` | Debug mode switch | false | No |
 
 ### Usage
-
-1. Start the service:
-```bash
-go run main.go
-```
-
-2. API Endpoints:
 
 - `expert_personality_generation`: Create a new agent
 - `agent_answer`: Simulate agent responses
