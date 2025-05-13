@@ -1,0 +1,22 @@
+{
+  "deepseek": {
+    "base_url": "https://api.deepseek.com",
+    "temperature": 0.7,
+    "timeout": 30
+  },
+  "log": {
+    "compress": true,
+    "file": "logs/agent-forge.log",
+    "level": "info",
+    "max_age": 28,
+    "max_backups": 3,
+    "max_size": 100
+  },
+  "server": {
+    "host": "localhost",
+    "port": 8080,
+    "rate_limit": 60,
+    "rate_limit_burst": 10,
+    "shutdown_timeout": 30
+  }
+}

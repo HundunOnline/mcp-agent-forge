@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  host: localhost
+  rate_limit: 60
+  rate_limit_burst: 10
+  shutdown_timeout: 30
+
+deepseek:
+  base_url: https://api.deepseek.com
+  temperature: 0.7
+  timeout: 30
+
+log:
+  level: info
+  file: logs/agent-forge.log
+  max_size: 100    # MB
+  max_backups: 3
+  max_age: 28      # 天
+  compress: true 

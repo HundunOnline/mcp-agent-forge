@@ -1,0 +1,6 @@
+{"level":"fatal","ts":"2025-05-13T13:56:57.847+0800","msg":"DEEPSEEK_API_KEY 未设置"}
+{"level":"error","ts":"2025-05-13T13:58:31.545+0800","msg":"DEEPSEEK_API_KEY 环境变量未设置"}
+{"level":"info","ts":"2025-05-13T13:59:22.701+0800","msg":"系统初始化完成","host":"localhost","port":8080}
+{"level":"info","ts":"2025-05-13T13:59:22.702+0800","msg":"服务启动","address":"localhost:8080","rate_limit":60}
+{"level":"fatal","ts":"2025-05-13T13:59:56.756+0800","msg":"服务启动失败","error":"context canceled"}
+{"level":"error","ts":"2025-05-13T14:05:02.035+0800","msg":"DEEPSEEK_API_KEY 环境变量未设置"}
