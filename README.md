@@ -5,7 +5,7 @@
 <a name="chinese"></a>
 ## 中文版
 
-Agent Forge 是一个智能体创建和管理平台，能够创建和管理具有特定性格特征的智能体，并模拟它们对问题的回答。通过agent forge mcp，你可以快速构建起一个类似于[CO-STORM](https://github.com/stanford-oval/storm)的多智能体协作研究项目。
+Agent Forge 是一个智能体创建和管理平台，能够创建和管理具有特定性格特征的智能体，并模拟它们对问题的回答。通过Agent Forge MCP，你可以快速构建起一个类似于[CO-STORM](https://github.com/stanford-oval/storm)的多智能体协作研究项目。
 
 ### 功能特点
 
@@ -24,7 +24,7 @@ Agent Forge 是一个智能体创建和管理平台，能够创建和管理具�
 
 ```bash
 git clone https://github.com/HundunOnline/mcp-agent-forge.git
-cd agent-forge && make build
+cd mcp-agent-forge && make build
 ```
 
 ### MCP 配置
