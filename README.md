@@ -96,7 +96,7 @@ cd agent-forge && make build
 
 我们在 Claude AI 中创建了一个示例应用，展示了如何使用 Agent Forge 创建和管理专家智能体：
 
-[Claude AI Demo](https://claude.ai/public/artifacts/81812f31-e73c-4520-814f-5ad211204d6b)
+[Claude AI Demo](https://claude.ai/share/00213269-9ab9-4923-9349-70d1492cd71e)
 
 这个示例展示了：
 - 如何创建具有特定专业背景的智能体
@@ -214,7 +214,7 @@ cd agent-forge && make build
 
 We created a sample application in Claude AI that demonstrates how to use Agent Forge to create and manage expert agents:
 
-[Claude AI Demo](https://claude.ai/public/artifacts/81812f31-e73c-4520-814f-5ad211204d6b)
+[Claude AI Demo](https://claude.ai/share/00213269-9ab9-4923-9349-70d1492cd71e)
 
 This example shows:
 - How to create agents with specific professional backgrounds
