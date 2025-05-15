@@ -5,7 +5,7 @@
 <a name="chinese"></a>
 ## 中文版
 
-Agent Forge 是一个智能体创建和管理平台，能够创建和管理具有特定性格特征的智能体，并模拟它们对问题的回答。通过agent forge mcp，你可以快速构建起一个类似于[CO-STORM](https://github.com/stanford-oval/storm)的多智能体协作研究项目。
+Agent Forge 是一个智能体创建和管理平台，能够创建和管理具有特定性格特征的智能体，并模拟它们对问题的回答。通过Agent Forge MCP，你可以快速构建起一个类似于[CO-STORM](https://github.com/stanford-oval/storm)的多智能体协作研究项目。
 
 ### 功能特点
 
@@ -24,7 +24,7 @@ Agent Forge 是一个智能体创建和管理平台，能够创建和管理具�
 
 ```bash
 git clone https://github.com/HundunOnline/mcp-agent-forge.git
-cd agent-forge && make build
+cd mcp-agent-forge && make build
 ```
 
 ### MCP 配置
@@ -96,7 +96,7 @@ cd agent-forge && make build
 
 我们在 Claude AI 中创建了一个示例应用，展示了如何使用 Agent Forge 创建和管理专家智能体：
 
-[Claude AI Demo](https://claude.ai/public/artifacts/81812f31-e73c-4520-814f-5ad211204d6b)
+[Claude AI Demo](https://claude.ai/share/00213269-9ab9-4923-9349-70d1492cd71e)
 
 这个示例展示了：
 - 如何创建具有特定专业背景的智能体
@@ -214,7 +214,7 @@ cd agent-forge && make build
 
 We created a sample application in Claude AI that demonstrates how to use Agent Forge to create and manage expert agents:
 
-[Claude AI Demo](https://claude.ai/public/artifacts/81812f31-e73c-4520-814f-5ad211204d6b)
+[Claude AI Demo](https://claude.ai/share/00213269-9ab9-4923-9349-70d1492cd71e)
 
 This example shows:
 - How to create agents with specific professional backgrounds
