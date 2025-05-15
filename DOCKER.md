@@ -26,6 +26,8 @@ docker run -d --name agent-forge \
   agent-forge
 ```
 
+> **重要:** `-i` 参数是必须的，它保持容器的标准输入通道打开，使MCP程序能够正常工作。如果没有此参数，容器可能会在启动后立即退出。
+
 ## 使用 Docker Compose (推荐)
 
 ### 准备环境变量
@@ -67,6 +69,7 @@ docker run -d --name agent-forge \
   --env DEEPSEEK_API_KEY=your_api_key_here \
   -v $(pwd)/your-config.yaml:/app/config/config.yaml \
   -v $(pwd)/logs:/app/logs \
+  -i \
   agent-forge
 ```
 
@@ -91,22 +94,23 @@ docker inspect --format='{{json .State.Health}}' agent-forge | jq
 
 如果容器在启动后退出：
 
-1. **检查退出原因**：
+1. **检查是否使用了 `-i` 参数**:
+   ```bash
+   # 正确的启动方式，带 -i 参数
+   docker run -i -d --name agent-forge -p 8080:8080 -e DEEPSEEK_API_KEY=your_api_key agent-forge
+   ```
+
+2. **检查退出原因**：
    ```bash
    docker logs agent-forge
    ```
 
-2. **进入运行中的容器排查**：
+3. **进入运行中的容器排查**：
    ```bash
    docker exec -it agent-forge /bin/sh
    ```
 
-3. **手动保持容器运行**：
+4. **检查应用是否有执行权限**：
    ```bash
-   # 使用tail命令保持容器运行
-   docker run -d --name agent-forge -p 8080:8080 -e DEEPSEEK_API_KEY=your_api_key_here agent-forge tail -f /dev/null
-   
-   # 然后在容器内执行应用程序进行调试
-   docker exec -it agent-forge /bin/sh
-   ./agent-forge
+   docker exec -it agent-forge /bin/sh -c "ls -la /app/agent-forge"
    ```
