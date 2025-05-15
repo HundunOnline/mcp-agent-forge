@@ -64,10 +64,6 @@ func init() {
 	openaiConfig := openai.DefaultConfig(cfg.DeepSeek.APIKey)
 	openaiConfig.BaseURL = cfg.DeepSeek.BaseURL
 	openaiClient = openai.NewClientWithConfig(openaiConfig)
-
-	logger.Info("系统初始化完成",
-		zap.String("host", cfg.Server.Host),
-		zap.Int("port", cfg.Server.Port))
 }
 
 // 调用DeepSeek API的公共方法
@@ -201,7 +197,6 @@ func roundTableDiscussionHandler(ctx context.Context, request mcp.GetPromptReque
 }
 
 func main() {
-	cfg := config.GetConfig()
 	log := logger.GetLogger()
 
 	// 创建 MCP 服务器
@@ -334,9 +329,6 @@ func main() {
 	s.AddTool(updateTool, updateAgentHandler)
 
 	// 启动服务器
-	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
-	log.Info("服务启动", zap.String("address", addr))
-
 	if err := server.ServeStdio(s); err != nil {
 		log.Fatal("服务启动失败", zap.Error(err))
 		os.Exit(1)

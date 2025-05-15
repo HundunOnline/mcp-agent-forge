@@ -19,8 +19,10 @@ docker build -t agent-forge .
 ```bash
 docker run -d --name agent-forge \
   -p 8080:8080 \
-  -e DEEPSEEK_API_KEY=your_api_key_here \
+  --env DEEPSEEK_API_KEY=your_api_key_here \
   -v $(pwd)/logs:/app/logs \
+  -v $(pwd)/config/config.yaml:/app/config/config.yaml \
+  -i \
   agent-forge
 ```
 
@@ -62,7 +64,7 @@ docker-compose down
 ```bash
 docker run -d --name agent-forge \
   -p 8080:8080 \
-  -e DEEPSEEK_API_KEY=your_api_key_here \
+  --env DEEPSEEK_API_KEY=your_api_key_here \
   -v $(pwd)/your-config.yaml:/app/config/config.yaml \
   -v $(pwd)/logs:/app/logs \
   agent-forge
@@ -83,4 +85,28 @@ docker inspect --format='{{json .State.Health}}' agent-forge | jq
 3. 检查服务日志:
    ```bash
    docker logs agent-forge
-   ``` 
+   ```
+
+### 容器退出问题
+
+如果容器在启动后退出：
+
+1. **检查退出原因**：
+   ```bash
+   docker logs agent-forge
+   ```
+
+2. **进入运行中的容器排查**：
+   ```bash
+   docker exec -it agent-forge /bin/sh
+   ```
+
+3. **手动保持容器运行**：
+   ```bash
+   # 使用tail命令保持容器运行
+   docker run -d --name agent-forge -p 8080:8080 -e DEEPSEEK_API_KEY=your_api_key_here agent-forge tail -f /dev/null
+   
+   # 然后在容器内执行应用程序进行调试
+   docker exec -it agent-forge /bin/sh
+   ./agent-forge
+   ```
