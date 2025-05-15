@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+.github
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 构建产物
+logs/
+agent-forge
+main
+
+# 临时文件
+*.tmp
+*.swp
+*.swo
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 文件
+.idea/
+.vscode/
+*.sublime-*
+
+# 文档
+docs/
+README.md
+LICENSE 

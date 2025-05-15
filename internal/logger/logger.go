@@ -35,11 +35,7 @@ func InitLogger(cfg *config.Config) error {
 
 		// 配置文件日志输出
 		writer := zapcore.AddSync(&lumberjack.Logger{
-			Filename:   cfg.Log.File,
-			MaxSize:    cfg.Log.MaxSize,
-			MaxBackups: cfg.Log.MaxBackups,
-			MaxAge:     cfg.Log.MaxAge,
-			Compress:   cfg.Log.Compress,
+			Filename: cfg.Log.File,
 		})
 
 		core = zapcore.NewCore(

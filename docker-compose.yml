@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  agent-forge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent-forge
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+      - ./config/config.yaml:/app/config/config.yaml
+    environment:
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+# 使用方法:
+# 1. 创建.env文件，设置DEEPSEEK_API_KEY
+# 2. 运行 docker-compose up -d 

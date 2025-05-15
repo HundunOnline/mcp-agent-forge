@@ -19,8 +19,6 @@ type Config struct {
 type ServerConfig struct {
 	Port            int    `mapstructure:"port"`
 	Host            string `mapstructure:"host"`
-	RateLimit       int    `mapstructure:"rate_limit"`       // 每分钟请求限制
-	RateLimitBurst  int    `mapstructure:"rate_limit_burst"` // 突发请求限制
 	ShutdownTimeout int    `mapstructure:"shutdown_timeout"` // 优雅关闭超时时间（秒）
 }
 
@@ -34,13 +32,9 @@ type DeepSeekConfig struct {
 
 // LogConfig 日志配置
 type LogConfig struct {
-	Enabled    bool   `mapstructure:"enabled"`     // 是否启用文件日志
-	Level      string `mapstructure:"level"`       // 日志级别
-	File       string `mapstructure:"file"`        // 日志文件路径
-	MaxSize    int    `mapstructure:"max_size"`    // 单个日志文件最大尺寸（MB）
-	MaxBackups int    `mapstructure:"max_backups"` // 最大保留的旧日志文件数
-	MaxAge     int    `mapstructure:"max_age"`     // 旧日志文件保留的最大天数
-	Compress   bool   `mapstructure:"compress"`    // 是否压缩旧日志文件
+	Enabled bool   `mapstructure:"enabled"` // 是否启用文件日志
+	Level   string `mapstructure:"level"`   // 日志级别
+	File    string `mapstructure:"file"`    // 日志文件路径
 }
 
 var cfg *Config
@@ -106,8 +100,6 @@ func LoadConfig() (*Config, error) {
 func setDefaults(execDir string) {
 	viper.SetDefault("server.port", 8080)
 	viper.SetDefault("server.host", "localhost")
-	viper.SetDefault("server.rate_limit", 60)
-	viper.SetDefault("server.rate_limit_burst", 10)
 	viper.SetDefault("server.shutdown_timeout", 30)
 
 	viper.SetDefault("deepseek.base_url", "https://api.deepseek.com")
@@ -119,10 +111,6 @@ func setDefaults(execDir string) {
 	viper.SetDefault("log.enabled", false) // 默认关闭文件日志
 	viper.SetDefault("log.level", "info")
 	viper.SetDefault("log.file", defaultLogPath)
-	viper.SetDefault("log.max_size", 100)
-	viper.SetDefault("log.max_backups", 3)
-	viper.SetDefault("log.max_age", 28)
-	viper.SetDefault("log.compress", true)
 }
 
 // GetConfig 获取配置实例

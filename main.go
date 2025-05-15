@@ -34,14 +34,11 @@ type Agent struct {
 // 存储所有生成的智能体
 var agents = make(map[string]*Agent)
 
-// ParamsStruct 定义请求参数结构
-type ParamsStruct struct {
-	Name      string                 `json:"name"`
-	Arguments map[string]interface{} `json:"arguments,omitempty"`
-	Meta      *struct {
-		ProgressToken mcp.ProgressToken `json:"progressToken,omitempty"`
-	} `json:"_meta,omitempty"`
-}
+// 定义角色常量
+const (
+	RoleSystem = "assistant"
+	RoleUser   = "user"
+)
 
 func init() {
 	// 初始化配置
@@ -74,7 +71,7 @@ func init() {
 }
 
 // 调用DeepSeek API的公共方法
-func callOpenAI(ctx context.Context, systemPrompt, userQuestion, context string) (string, error) {
+func callOpenAI(ctx context.Context, systemPrompt, userQuestion, contextContent string) (string, error) {
 	messages := []openai.ChatCompletionMessage{
 		{
 			Role:    openai.ChatMessageRoleSystem,
@@ -83,10 +80,10 @@ func callOpenAI(ctx context.Context, systemPrompt, userQuestion, context string)
 	}
 
 	// 如果有背景信息，添加到提示中
-	if context != "" {
+	if contextContent != "" {
 		messages = append(messages, openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleUser,
-			Content: context,
+			Content: contextContent,
 		})
 	}
 
@@ -96,12 +93,24 @@ func callOpenAI(ctx context.Context, systemPrompt, userQuestion, context string)
 		Content: userQuestion,
 	})
 
+	cfg := config.GetConfig()
+
+	// 设置请求超时
+	clientCtx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.DeepSeek.Timeout)*time.Second)
+	defer cancel()
+
+	// 如果传入的上下文不是nil，使用传入的上下文
+	requestCtx := clientCtx
+	if ctx != nil {
+		requestCtx = ctx
+	}
+
 	resp, err := openaiClient.CreateChatCompletion(
-		ctx,
+		requestCtx,
 		openai.ChatCompletionRequest{
 			Model:       "deepseek-chat", // 使用DeepSeek的模型
 			Messages:    messages,
-			Temperature: 0.7,
+			Temperature: float32(cfg.DeepSeek.Temperature), // 转换为float32类型
 		},
 	)
 
@@ -128,6 +137,69 @@ func callOpenAI(ctx context.Context, systemPrompt, userQuestion, context string)
 	return content, nil
 }
 
+// generateExpertAgentHandler 处理生成专家提示词的请求
+func generateExpertAgentHandler(ctx context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+	// 获取并验证 agent_name
+	agentName, ok := request.Params.Arguments["agent_name"]
+	if !ok {
+		return nil, fmt.Errorf("missing agent_name")
+	}
+
+	// 获取并验证 core_traits
+	coreTraits, ok := request.Params.Arguments["core_traits"]
+	if !ok {
+		return nil, fmt.Errorf("missing core_traits")
+	}
+
+	messages := []mcp.PromptMessage{
+		mcp.NewPromptMessage(
+			RoleSystem,
+			mcp.NewTextContent("你是一个专家人格生成工具，请根据智能体名称和核心特质生成一个专家人格的提示词。注意仅返回提示词，不要包含任何其他内容。"),
+		),
+		mcp.NewPromptMessage(
+			RoleUser,
+			mcp.NewTextContent(fmt.Sprintf("请为名为[%s]的智能体生成一个人格描述，核心特质是：[%s]", agentName, coreTraits)),
+		),
+	}
+
+	return mcp.NewGetPromptResult(
+		"专家生成",
+		messages,
+	), nil
+}
+
+// roundTableDiscussionHandler 处理生成圆桌讨论提示词的请求
+func roundTableDiscussionHandler(ctx context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+	// 获取并验证 topic
+	topic, ok := request.Params.Arguments["topic"]
+	if !ok {
+		return nil, fmt.Errorf("missing topic")
+	}
+
+	messages := []mcp.PromptMessage{
+		mcp.NewPromptMessage(
+			RoleSystem,
+			mcp.NewTextContent(`你是探索流的主持人，请你收集资料，根据需要讨论的话题创建必要角色的智能体专家来进行一场称为**探索流**的讨论。讨论的过程中，你将作为主持人来控场。探索流的规则如下：
+1、探索流是一种交互式学习和讨论方式，旨在通过动态的对话、试验和反思，发现新观点、解决问题或突破现有局限。它强调通过"表达"、"呼应"和"看见"的过程，激发潜意识和群体智慧，创造新的认知和行为模式。探索流注重个体的自由表达和安全场域，禁止评判、建议和反馈，以实现深度的自我探索和心灵连接。作为一种创新实践方法，探索流通过组织内外的协作与同步，推动创造力和创新能力的涌现，同时探索人与人之间的交互方式，促进认知和情感的双向流动。它还涉及对流的研究和实践，通过关键词反应、生成式AI的交互模式以及集群智慧的涌现，优化复杂系统中的动态过程，发现问题的本质并寻找解决方案。探索流不仅是一种团队协作和深度讨论的方式，也是一种精神探索的过程，通过倾听和观察自然现象达到内心的平静，并通过持续探索和追问重新定义业务和产品的主题或方向。
+2、探索流分为"表达"、"呼应"、"看见"三个大的讨论阶段，表达阶段每人发言一次，呼应阶段可以自由发言，看见阶段每人发言总结一次；
+3、"表达"是一种交流方式，指个体通过语言、行为、艺术或其他形式，将内心深处的思想、情感、观点或灵魂传递给他人的过程。它既是探索流网络中的输出过程，也是探索流的第一阶段，**参与者轮流分享对主题的想法和内容物**。表达可以分为"表"和"达"两个层次，涵盖从信息传递到情感流露的多种形式，体现了个体内心真实感受的外化与分享。
+4、"呼应"是一种交流方式，强调当下的真实发生和自然反应，同时通过倾听和回应他人表达的内容来建立深层次的联系。它是一种内在反应或共鸣，通过关键词或符号触发个人内心的潜意识反应，并生成新的关联。呼应不仅是一种对他人观点或行为的回应或支持，还涉及通过动作与流建立联系，强调看见和表达的重要性。作为探索流的核心步骤和第二阶段，**呼应通过对触动自己的关键词进行反馈或回应**，唤醒个人内在的想法和潜意识，并在探索流网络的隐藏层中产生新的火花。这种交互行为在哲学和社群动态中具有重要意义，能够促进思想的流动和情感的共鸣。
+5、"看见"是一种深刻的意识和理解过程，既指对问题或现象的认知与关注，也是一种通过观察他人而发现自我并真实表达的心理体验。它超越了表面观察，达到心灵的共鸣，能够引发自我和他人的内心转变。作为探索流中的一个核心概念，"看见"涉及通过关键词发现其背后的结构或意义，并通过身心感知他人的表达来觉察内心深处的真实状态。在探索流网络中，"看见"是第三步，**通过识别关键词之间的关系生成结构，从而深化理解与觉察**。这一过程不仅是认知的深化，更是心灵的连接与转化的关键环节。
+6、最后你作为主持人进行最终的收敛总结，输出一篇探索流报告。
+7、每个阶段结束时，你都要通知用户，等用户的指令再进行下一阶段`),
+		),
+		mcp.NewPromptMessage(
+			RoleUser,
+			mcp.NewTextContent(fmt.Sprintf("现在请围绕主题[%s]组织一场探索流讨论", topic)),
+		),
+	}
+
+	return mcp.NewGetPromptResult(
+		"探索流",
+		messages,
+	), nil
+}
+
 func main() {
 	cfg := config.GetConfig()
 	log := logger.GetLogger()
@@ -136,7 +208,34 @@ func main() {
 	s := server.NewMCPServer(
 		"智能体锻造工具",
 		"1.0.0",
+		server.WithPromptCapabilities(true), // 启用 prompts 功能
 	)
+
+	// 添加创建专家提示词
+	generateExpertAgentPrompt := mcp.NewPrompt("generate_expert_agent",
+		mcp.WithPromptDescription("系统提示词，用于生成智能体的人格"),
+		mcp.WithArgument("agent_name",
+			mcp.ArgumentDescription("智能体名称"),
+			mcp.RequiredArgument(),
+		),
+		mcp.WithArgument("core_traits",
+			mcp.ArgumentDescription("核心特质"),
+			mcp.RequiredArgument(),
+		),
+	)
+
+	// 添加圆桌讨论提示词
+	roundTableDiscussionPrompt := mcp.NewPrompt("round_table_discussion",
+		mcp.WithPromptDescription("用于组织探索流的提示词"),
+		mcp.WithArgument("topic",
+			mcp.ArgumentDescription("探索主题"),
+			mcp.RequiredArgument(),
+		),
+	)
+
+	// 添加提示词处理器
+	s.AddPrompt(generateExpertAgentPrompt, generateExpertAgentHandler)
+	s.AddPrompt(roundTableDiscussionPrompt, roundTableDiscussionHandler)
 
 	// 创建智能体工具
 	createTool := mcp.NewTool(
@@ -236,9 +335,7 @@ func main() {
 
 	// 启动服务器
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
-	log.Info("服务启动",
-		zap.String("address", addr),
-		zap.Int("rate_limit", cfg.Server.RateLimit))
+	log.Info("服务启动", zap.String("address", addr))
 
 	if err := server.ServeStdio(s); err != nil {
 		log.Fatal("服务启动失败", zap.Error(err))
