@@ -335,7 +335,7 @@ func main() {
 	}
 }
 
-// 修改getHandlerForModel函数
+// createToolHandler handles agent creation requests
 func createToolHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	log := logger.GetLogger()
 
