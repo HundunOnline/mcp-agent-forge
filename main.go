@@ -36,8 +36,12 @@ var agents = make(map[string]*Agent)
 
 // 定义角色常量
 const (
+	// RoleSystem denotes the system message role for prompts.
+	// DeepSeek uses "assistant" for system-style instructions
+	// when embedding them into prompts.
 	RoleSystem = "assistant"
-	RoleUser   = "user"
+	// RoleUser denotes a user message role.
+	RoleUser = "user"
 )
 
 func init() {
